@@ -70,7 +70,7 @@
             android:text="GPS" />
 
         <ProgressBar
-            android:id="@+id/progressBar5"
+            android:id="@+id/progressBarGPS"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
