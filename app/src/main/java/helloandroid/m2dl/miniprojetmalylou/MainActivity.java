@@ -73,7 +73,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 float magField_x = values[0];
                 float magField_y = values[1];
                 float magField_z = values[2];
-                tv.setText("TYPE_MAGNETIC_FIELD x : " + magField_x +" y :"+magField_y+" z : "+magField_z);
+                TextView view = (TextView) findViewById(R.id.debugText);
+                ProgressBar progressbar = (ProgressBar) findViewById(R.id.progressBarAccel);
+                progressbar.setProgress((int) magField_z %100);
+                view.setText("TYPE_MAGNETIC_FIELD x : " + magField_x +" y :"+magField_y+" z : "+magField_z);
+               // setContentView(view);
             }
         }
     }
@@ -88,13 +92,26 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         float posx = event.getX();
         float posy = event.getY();
         cpt ++;
-        TextView view = (TextView) findViewById(R.id.debugText);
-        view.setText("pos x" + posx + "pos y" + posy);
+        //TextView view = (TextView) findViewById(R.id.debugText);
+        //view.setText("pos x" + posx + "pos y" + posy);
         ProgressBar progressbar = (ProgressBar) findViewById(R.id.progressBarTactile);
         progressbar.setProgress((int) posx %100);
         //setContentView(progressbar);
         //setContentView(view);
 
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Sensor mMagneticField = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        sm.registerListener(this, mMagneticField, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onStop() {
+        sm.unregisterListener(this, sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD));
+        super.onStop();
     }
 }

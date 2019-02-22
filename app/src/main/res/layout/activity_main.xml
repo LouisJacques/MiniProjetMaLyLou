@@ -58,7 +58,7 @@
             android:text="Accéléromêtre" />
 
         <ProgressBar
-            android:id="@+id/progressBar4"
+            android:id="@+id/progressBarAccel"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
