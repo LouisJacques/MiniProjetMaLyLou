@@ -12,9 +12,9 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private TextView textViewLight;
-    private TextView textViewSound;
 
     private SensorManager sensorManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         textViewLight = findViewById(R.id.light);
-        textViewSound = findViewById(R.id.sound);
     }
 
     @Override
