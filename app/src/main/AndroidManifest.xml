@@ -19,6 +19,7 @@
     </application>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     ...
     <!-- Needed only if your app targets Android 5.0 (API level 21) or higher. -->
