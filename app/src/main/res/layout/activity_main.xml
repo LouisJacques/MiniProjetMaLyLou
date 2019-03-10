@@ -7,95 +7,27 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/debugText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Partie 1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.051" />
-
     <LinearLayout
         android:id="@+id/layout"
-        android:layout_width="395dp"
-        android:layout_height="340dp"
+        android:layout_width="316dp"
+        android:layout_height="546dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="212dp">
-
-        <TextView
-            android:id="@+id/textSoundLevel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Niveau sonore" />
-
-        <ProgressBar
-            android:id="@+id/progressBar2"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/textLightLevel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Niveau de luminosité" />
-
-        <ProgressBar
-            android:id="@+id/progressBar3"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/textAcelerator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Accéléromêtre" />
-
-        <ProgressBar
-            android:id="@+id/progressBarAccel"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/textGPS"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="GPS" />
-
-        <ProgressBar
-            android:id="@+id/progressBarGPS"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/textTouch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Écran Tactile" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <ProgressBar
-            android:id="@+id/progressBarTactile"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/buttonStop"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="68dp"
             android:text="Stop Acquire Data" />
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="662dp"
+            android:visibility="visible"
+            tools:layout_editor_absoluteX="3dp"
+            tools:layout_editor_absoluteY="6dp" />
 
     </LinearLayout>
 
