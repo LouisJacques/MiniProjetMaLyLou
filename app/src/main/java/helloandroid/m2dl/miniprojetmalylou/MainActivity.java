@@ -65,6 +65,23 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             //location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         } else {
             //location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                androidUpdateLocation(null);
+
+                mRecorder = new MediaRecorder();
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                mRecorder.setOutputFile("/dev/null");
+                try {
+                    mRecorder.prepare();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mSleepTask.run();
+
         }
 
         //location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
