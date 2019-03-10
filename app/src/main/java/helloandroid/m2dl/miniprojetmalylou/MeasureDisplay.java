@@ -83,6 +83,9 @@ public class MeasureDisplay {
     private void draw() {
         Canvas canvas = sv.getHolder().lockCanvas();
 
+        if (canvas == null) {
+            return;
+        }
         // paint
         Paint polyPaint = new Paint();
         polyPaint.setStrokeWidth(2);

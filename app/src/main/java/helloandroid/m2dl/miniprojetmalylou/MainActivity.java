@@ -1,6 +1,7 @@
 package helloandroid.m2dl.miniprojetmalylou;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.Sensor;
@@ -8,6 +9,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -31,6 +34,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private MediaRecorder mRecorder;
     private Handler mHandler;
 
+    private LocationManager androidLocationManager;
+    private Location location;
+    private LocationListener androidLocationListener;
+    private final static int REQUEST_CODE_UPDATE_LOCATION = 42;
+    private final static int REQUEST_MIC_ACCESS = 10;
+
     // constants
     private static final int VAL_MAX = 200;
 
@@ -38,45 +47,31 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        resizeLayout();
+        initDisplayer();
+
+        mHandler = new Handler();
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
         View view = findViewById(R.id.mainLayout);
-        /*LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                makeUseOfNewLocation(location);
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-
-        };*/
 
         view.setOnTouchListener(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},
-                    10);
-            /*mRecorder = new MediaRecorder();
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mRecorder.setOutputFile("/dev/null");
-            try {
-                mRecorder.prepare();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mRecorder.start(); */
+
+        // androidLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(
+                    MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.RECORD_AUDIO},
+                    1);
+            //location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         } else {
+            //location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            androidUpdateLocation(null);
+
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -90,11 +85,41 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 e.printStackTrace();
             }
             mSleepTask.run();
-        }
-        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
-        resizeLayout();
-        initDisplayer();
+        }
+
+        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+    }
+
+    public void androidUpdateLocation(View view) {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_UPDATE_LOCATION);
+        } else {
+            androidLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            androidLocationListener = new LocationListener() {
+                public void onLocationChanged(Location loc) {
+                    int progress = (int) Math.abs(loc.getLatitude()*loc.getLongitude());
+                    display.updatePtGPS(progress);
+                }
+
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                }
+
+                public void onProviderEnabled(String provider) {
+                }
+
+                public void onProviderDisabled(String provider) {
+                }
+            };
+
+            androidLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    1000, // en millisecondes
+                    10, // en mètres
+                    androidLocationListener);
+        }
     }
 
     private void resizeLayout() {
@@ -122,20 +147,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         display = new MeasureDisplay(size, (SurfaceView) findViewById(R.id.surfaceView));
     }
 
-    private Runnable mSleepTask = new Runnable() {
+    private Runnable eventSound = new Runnable() {
         public void run() {
-            mRecorder.start();
-            //Noise monitoring start
-            // Runnable(mPollTask) will execute after POLL_INTERVAL
+            Double amp = 20 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
+            display.updatePtSonore(amp.intValue()%VAL_MAX);
             mHandler.postDelayed(eventSound, 1000);
         }
     };
 
-    private Runnable eventSound = new Runnable() {
+    private Runnable mSleepTask = new Runnable() {
         public void run() {
-            Double amp = 20 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
-            display.updatePtSonore(amp.intValue());
-            // Runnable(mPollTask) will again execute after POLL_INTERVAL
+            mRecorder.start();
             mHandler.postDelayed(eventSound, 1000);
         }
     };
@@ -144,25 +166,59 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 10) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                mRecorder = new MediaRecorder();
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-                mRecorder.setOutputFile("/dev/null");
-                try {
-                    mRecorder.prepare();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+        switch (requestCode) {
+            case REQUEST_CODE_UPDATE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    androidUpdateLocation(null);
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission refusée.", Toast.LENGTH_LONG).show();
                 }
-                //mRecorder.start();
-                mSleepTask.run();
-            } else {
-                //User denied Permission.
-            }
+                break;
+
+            case REQUEST_MIC_ACCESS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mRecorder = new MediaRecorder();
+                    mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                    mRecorder.setOutputFile("/dev/null");
+                    try {
+                        mRecorder.prepare();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mSleepTask.run();
+                } else {
+                    //User denied Permission.
+                }
+                break;
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    androidUpdateLocation(null);
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission refusée.", Toast.LENGTH_LONG).show();
+                }
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mRecorder = new MediaRecorder();
+                    mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                    mRecorder.setOutputFile("/dev/null");
+                    try {
+                        mRecorder.prepare();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mSleepTask.run();
+                } else {
+                    //User denied Permission.
+                }
+
         }
     }
 
@@ -180,6 +236,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 int progress = (int) (strength) %VAL_MAX;
 
                 display.updatePtAccelerometre(Math.abs(progress));
+            } else if (sensor == Sensor.TYPE_LIGHT) {
+                int progress = (int) event.values[0] %VAL_MAX;
+                display.updatePtLum(progress);
             }
         }
     }
@@ -206,11 +265,29 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         super.onResume();
         Sensor mMagneticField = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         sm.registerListener(this, mMagneticField, SensorManager.SENSOR_DELAY_NORMAL);
+
+        sm.registerListener(
+                this,
+                sm.getDefaultSensor(Sensor.TYPE_LIGHT),
+                SensorManager.SENSOR_DELAY_NORMAL
+        );
     }
 
     @Override
     protected void onStop() {
         sm.unregisterListener(this, sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD));
+
+        sm.unregisterListener(this, sm.getDefaultSensor(Sensor.TYPE_LIGHT));
+
+        if (androidLocationListener != null) {
+            if (androidLocationManager == null) {
+                androidLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            }
+            androidLocationManager.removeUpdates(androidLocationListener);
+            androidLocationManager = null;
+            androidLocationListener = null;
+        }
+
         super.onStop();
     }
 
