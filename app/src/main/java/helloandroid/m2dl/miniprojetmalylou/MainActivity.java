@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private final static int REQUEST_MIC_ACCESS = 10;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,15 +54,21 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         androidLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
-        androidLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        // androidLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: faire quelque chose si besoin
-
-            return;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(
+                    MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.RECORD_AUDIO},
+                    1);
+            //location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        } else {
+            //location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
 
-        location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //location = androidLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        /*
         if (location != null) {
             // Localisation disponible
             Toast.makeText(MainActivity.this, "Vous étiez récemment ici : " + location.getLatitude() + " / " + location.getLongitude(), Toast.LENGTH_LONG).show();
@@ -105,12 +110,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 tvAndroidUpdateLocation.setText(loc.getLatitude() + " / " + loc.getLongitude());
                 System.out.println(loc.getLatitude() + " / " + loc.getLongitude());
                 */
-
-                int gpsLatitude = (int)Math.abs(loc.getLatitude());
+/*
+                int gpsLatitude = (int) Math.abs(loc.getLatitude());
                 System.out.println("gps latitude " + gpsLatitude);
 
-               ProgressBar gpsProgressBar = (ProgressBar) findViewById(R.id.progressBarGPS);
-               gpsProgressBar.setProgress(gpsLatitude);
+                ProgressBar gpsProgressBar = (ProgressBar) findViewById(R.id.progressBarGPS);
+                gpsProgressBar.setProgress(gpsLatitude);
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -128,10 +133,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 1000, // en millisecondes
                 50, // en mètres
                 androidLocationListener);
-
+ */
 
         view.setOnTouchListener(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+       /* if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},
                     REQUEST_MIC_ACCESS);
@@ -149,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 e.printStackTrace();
             }
             mSleepTask.run();
-        }
+        } */
     }
 
     public void androidUpdateLocation(View view) {
@@ -165,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 public void onLocationChanged(Location loc) {
                     Toast.makeText(MainActivity.this, "Vous bougez, vous êtes ici : " + loc.getLatitude() + " / " + loc.getLongitude(), Toast.LENGTH_LONG).show();
 
-                    int gpsLatitude = (int)Math.abs(loc.getLatitude());
+                    int gpsLatitude = (int) Math.abs(loc.getLatitude());
                     System.out.println("gps latitude " + gpsLatitude);
 
                     ProgressBar gpsProgressBar = (ProgressBar) findViewById(R.id.progressBarGPS);
@@ -205,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             amp = 20 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
 
             ProgressBar progressbar = (ProgressBar) findViewById(R.id.progressBar2);
-            progressbar.setProgress(amp.intValue() );
+            progressbar.setProgress(amp.intValue());
 
             mHandler.postDelayed(eventSound, 1000);
         }
@@ -229,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             }
 
-            if(event.sensor.getType()==Sensor.TYPE_LIGHT) {
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
                 int value = (int) event.values[0] / 100;
                 ProgressBar lightProgressBar = (ProgressBar) findViewById(R.id.progressLight);
                 lightProgressBar.setProgress(value);
@@ -319,6 +324,30 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     //User denied Permission.
                 }
                 break;
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    androidUpdateLocation(null);
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission refusée.", Toast.LENGTH_LONG).show();
+                }
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mRecorder = new MediaRecorder();
+                    mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                    mRecorder.setOutputFile("/dev/null");
+                    try {
+                        mRecorder.prepare();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mSleepTask.run();
+                } else {
+                    //User denied Permission.
+                }
+
         }
     }
 
