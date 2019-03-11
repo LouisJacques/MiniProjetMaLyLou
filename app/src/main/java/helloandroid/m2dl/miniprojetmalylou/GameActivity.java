@@ -38,11 +38,38 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         if(getIntent().getExtras() != null) {
             TextView deb = (TextView) findViewById(R.id.debugViewGame);
             Bundle bundle = getIntent().getExtras();
-            bundle.getString("valuesLight" );
-            String res = bundle.getString("valuesGPS" )
-                        + bundle.getString("valuesTouch" )
-                        +bundle.getString("valuesAcc" )
-                        +bundle.getString("valuesSound" );
+            String res ="";
+            if(bundle.getIntegerArrayList("valuesLight" ) != null){
+                    for(Integer i : bundle.getIntegerArrayList("valuesLight" )){
+                        res += i;
+                    }
+                //res +=  bundle.getString("valuesLight" ).toString();
+            }
+            if(bundle.getIntegerArrayList("valuesGPS" ) != null){
+                for(Integer i : bundle.getIntegerArrayList("valuesGPS" )){
+                    res += i;
+                }
+                //res += bundle.getString("valuesGPS" ).toString();
+            }
+            if(bundle.getIntegerArrayList("valuesTouch" ) != null){
+                for(Integer i : bundle.getIntegerArrayList("valuesTouch" )){
+                    res += i;
+                }
+                //res += bundle.getString("valuesTouch" ).toString();
+            }
+            if(bundle.getIntegerArrayList("valuesAcc" ) != null){
+                for(Integer i : bundle.getIntegerArrayList("valuesAcc" )){
+                    res += i;
+                }
+                //res += bundle.getString("valuesAcc" ).toString();
+            }
+            if(bundle.getIntegerArrayList("valuesSound" ) != null){
+                for(Integer i : bundle.getIntegerArrayList("valuesSound" )){
+                    res += i;
+                }
+                //res += bundle.getString("valuesSound" ).toString();
+            }
+
 
 
             deb.setText(res);
