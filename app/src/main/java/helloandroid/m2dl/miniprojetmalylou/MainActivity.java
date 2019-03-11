@@ -153,7 +153,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Runnable eventSound = new Runnable() {
         public void run() {
             Double amp = 190 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
-            display.updatePtSonore((amp.intValue()*2)%385);
+            display.updatePtSonore((Math.abs(amp.intValue()*2)%385));
+
+
             mHandler.postDelayed(eventSound, 1000);
         }
     };
