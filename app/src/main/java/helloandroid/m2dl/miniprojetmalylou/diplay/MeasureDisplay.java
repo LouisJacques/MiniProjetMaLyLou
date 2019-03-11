@@ -1,4 +1,4 @@
-package helloandroid.m2dl.miniprojetmalylou;
+package helloandroid.m2dl.miniprojetmalylou.diplay;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

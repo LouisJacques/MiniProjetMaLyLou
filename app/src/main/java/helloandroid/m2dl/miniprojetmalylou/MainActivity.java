@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import helloandroid.m2dl.miniprojetmalylou.diplay.MeasureDisplay;
+
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener, SensorEventListener {
     // components
     private SensorManager sm = null;
