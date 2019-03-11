@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         mHandler = new Handler();
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+
+
         View view = findViewById(R.id.mainLayout);
 
         view.setOnTouchListener(this);
@@ -149,12 +152,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     private Runnable eventSound = new Runnable() {
         public void run() {
-            Double amp = 20 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
-            if(amp > 0){
-                display.updatePtSonore((amp.intValue()*2)%VAL_MAX);
-            }else{
-                display.updatePtSonore(0);
-            }
+            Double amp = 190 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
+            display.updatePtSonore((amp.intValue()*2)%385);
             mHandler.postDelayed(eventSound, 1000);
         }
     };
@@ -236,12 +235,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 float magField_x = values[0];
                 float magField_y = values[1];
                 float magField_z = values[2];
-                double strength = Math.sqrt( (magField_x*magField_x) + (magField_y*magField_y) + (magField_z*magField_z) );
-                int progress = (int) (strength) %VAL_MAX;
+                float strength = magField_x + magField_y + magField_z;
+                int progress = (int) ((magField_x + magField_y + magField_z));
 
                 display.updatePtAccelerometre(Math.abs(progress));
             } else if (sensor == Sensor.TYPE_LIGHT) {
-                int progress = (int) event.values[0] %VAL_MAX;
+                int progress = (int) (event.values[0]);
+
+                if(progress > 200) {
+                    progress = progress % 200;
+                }
+
                 display.updatePtLum(progress);
             }
         }
