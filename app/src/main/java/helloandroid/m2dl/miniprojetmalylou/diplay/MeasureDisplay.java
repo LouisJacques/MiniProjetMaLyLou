@@ -268,7 +268,7 @@ public class MeasureDisplay {
 
     public void updatePtGPS(int progress) {
         double next_tick = System.currentTimeMillis();
-        Point goal = new Point(ptCentre.x - progress*3/2, ptCentre.y + progress*3/4);
+        Point goal = new Point(ptCentre.x - progress*3/4, ptCentre.y + progress*3/4);
         moveAndDraw(goal, ptGPS, next_tick);
     }
 
