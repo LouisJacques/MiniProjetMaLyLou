@@ -128,8 +128,22 @@ public class MeasureDisplay {
         polyPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         canvas.drawPath(polyPath, polyPaint);
 
+        drawText(canvas, polyPaint);
 
         sv.getHolder().unlockCanvasAndPost(canvas);
+    }
+
+    private void drawText(Canvas canvas, Paint polyPaint) {
+        polyPaint.setStyle(Paint.Style.STROKE);
+        polyPaint.setColor(Color.WHITE);
+        polyPaint.setTextSize(VAL_MAX/7);
+        ArrayList<Point> hexa = getHexagone(5);
+
+        canvas.drawText("Son",hexa.get(0).x - VAL_MAX/10, hexa.get(0).y - VAL_MAX/5, polyPaint);
+        canvas.drawText("Accéléromètre",hexa.get(1).x - 3*VAL_MAX/4, hexa.get(1).y - VAL_MAX/2, polyPaint);
+        canvas.drawText("Ecran tactile",hexa.get(2).x + VAL_MAX/10, hexa.get(2).y, polyPaint);
+        canvas.drawText("GPS",hexa.get(3).x - 2*VAL_MAX/5, hexa.get(3).y, polyPaint);
+        canvas.drawText("Lumière",hexa.get(4).x, hexa.get(4).y - VAL_MAX/2, polyPaint);
     }
 
     /**
