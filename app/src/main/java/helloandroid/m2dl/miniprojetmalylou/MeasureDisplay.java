@@ -125,7 +125,7 @@ public class MeasureDisplay {
         // points
         polyPaint.setColor(Color.RED);
         canvas.drawCircle((float) ptCentre.x, (float) ptCentre.y, 2, polyPaint);
-        //polyPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        polyPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         canvas.drawPath(polyPath, polyPaint);
 
 
@@ -210,7 +210,6 @@ public class MeasureDisplay {
         }
 
         if (list.size() == 1) {
-            list.add(getBarycentre(list.get(0), ptCentre));
             list.add(ptCentre);
         } else if (list.size() > 1) {
             list.add(getBarycentre(last, list.get(0)));
@@ -261,7 +260,7 @@ public class MeasureDisplay {
 
     public void updatePtSonore(int progress) {
         double next_tick = System.currentTimeMillis();
-        Point goal = new Point(ptCentre.x, ptCentre.y + progress*3/4);
+        Point goal = new Point(ptCentre.x, ptCentre.y - progress*3/4);
         moveAndDraw(goal, ptSonore, next_tick);
     }
 

@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             androidLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             androidLocationListener = new LocationListener() {
                 public void onLocationChanged(Location loc) {
-                    int progress = (int) Math.abs(loc.getLatitude()*loc.getLongitude());
+                    int progress = (int) Math.abs(loc.getLatitude()*loc.getLongitude()) % VAL_MAX;
                     display.updatePtGPS(progress);
                 }
 
