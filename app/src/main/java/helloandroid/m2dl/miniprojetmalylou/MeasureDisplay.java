@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.os.Handler;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ public class MeasureDisplay {
     */
     private Point ptSonore, ptGPS, ptLuminosite, ptAccelerometre, ptEcranTactile;
     private Point ptCentre;
-    private Point ptMilieuHautDroit, ptMilieuHautGauche, ptMilieuBasGauche, ptMilieuBasDroit, ptMilieuBas;
 
     private ArrayList<Path> hexagonePaths = new ArrayList<>();
 
@@ -30,6 +30,8 @@ public class MeasureDisplay {
     private static final int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
     private static final int MAX_FRAMESKIP = 5;
 
+    private Handler handler;
+
     private Point size;
 
     public MeasureDisplay(Point size, SurfaceView sv) {
@@ -37,6 +39,27 @@ public class MeasureDisplay {
         this.sv = sv;
         setPointsAndLists();
     }
+
+    /*public void startDrawing() {
+        handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    long next_tick = System.currentTimeMillis();
+                    int loops = 0;
+                    while (System.currentTimeMillis() > next_tick
+                            && loops < MAX_FRAMESKIP) {
+
+
+                        next_tick += SKIP_TICKS;
+                        loops++;
+                    }
+                    draw();
+                }
+            }
+        });
+    }*/
 
     // METHODES SUR LES ACTIONS SUR LES POINTS DES MESURES
 
@@ -68,12 +91,6 @@ public class MeasureDisplay {
         ptEcranTactile = new Point(x2, y2);
         ptLuminosite = new Point(x2, y2);
         ptGPS = new Point(x2, y2);
-
-        ptMilieuBas = new Point(x2, y2);
-        ptMilieuBasGauche = new Point(x2, y2);
-        ptMilieuBasDroit = new Point(x2, y2);
-        ptMilieuHautGauche = new Point(x2, y2);
-        ptMilieuHautDroit = new Point(x2, y2);
     }
 
     /**
@@ -90,8 +107,6 @@ public class MeasureDisplay {
         Paint polyPaint = new Paint();
         polyPaint.setStrokeWidth(2);
         polyPaint.setStrokeCap(Paint.Cap.ROUND);
-
-        updateMiddlePoints();
 
         // path
         Path polyPath = getPath(getMeasurePointList());
@@ -124,13 +139,13 @@ public class MeasureDisplay {
     private void waitAndDraw(double next_tick) {
         int loops = 0;
         while (System.currentTimeMillis() > next_tick
-                && loops < MAX_FRAMESKIP) {
+                && loops < MAX_FRAMESKIP/2) {
 
 
             next_tick += SKIP_TICKS;
             loops++;
         }
-        draw();
+        //draw(); // à décommenter si besoin
     }
 
     /**
@@ -160,16 +175,46 @@ public class MeasureDisplay {
      */
     private ArrayList<Point> getMeasurePointList() {
         ArrayList<Point> list = new ArrayList<>();
-        list.add(ptSonore);
-        list.add(ptMilieuHautDroit);
-        list.add(ptAccelerometre);
-        list.add(ptMilieuBasDroit);
-        list.add(ptEcranTactile);
-        list.add(ptMilieuBas);
-        list.add(ptGPS);
-        list.add(ptMilieuBasGauche);
-        list.add(ptLuminosite);
-        list.add(ptMilieuHautGauche);
+        Point last = null;
+        if (!ptSonore.equals(ptCentre)) {
+            list.add(ptSonore);
+            last = ptSonore;
+        }
+        if (!ptAccelerometre.equals(ptCentre)) {
+            if (last != null) {
+                list.add(getBarycentre(last,ptAccelerometre));
+            }
+            list.add(ptAccelerometre);
+            last = ptAccelerometre;
+        }
+        if (!ptEcranTactile.equals(ptCentre)) {
+            if (last != null) {
+                list.add(getBarycentre(last,ptEcranTactile));
+            }
+            list.add(ptEcranTactile);
+            last = ptEcranTactile;
+        }
+        if (!ptGPS.equals(ptCentre)) {
+            if (last != null) {
+                list.add(getBarycentre(last,ptGPS));
+            }
+            list.add(ptGPS);
+            last = ptGPS;
+        }
+        if (!ptLuminosite.equals(ptCentre)) {
+            if (last != null) {
+                list.add(getBarycentre(last,ptLuminosite));
+            }
+            list.add(ptLuminosite);
+            last = ptLuminosite;
+        }
+
+        if (list.size() == 1) {
+            list.add(getBarycentre(list.get(0), ptCentre));
+            list.add(ptCentre);
+        } else if (list.size() > 1) {
+            list.add(getBarycentre(last, list.get(0)));
+        }
 
         return list;
     }
@@ -188,17 +233,6 @@ public class MeasureDisplay {
         polyPath.lineTo(list.get(0).x, list.get(0).y);
 
         return polyPath;
-    }
-
-    /**
-     * Màj les points entre les mesures
-     */
-    private void updateMiddlePoints() {
-        ptMilieuHautDroit = getBarycentre(ptSonore, ptAccelerometre);
-        ptMilieuHautGauche = getBarycentre(ptLuminosite, ptSonore);
-        ptMilieuBasDroit = getBarycentre(ptAccelerometre, ptEcranTactile);
-        ptMilieuBasGauche = getBarycentre(ptLuminosite, ptGPS);
-        ptMilieuBas = getBarycentre(ptGPS, ptEcranTactile);
     }
 
     /**
