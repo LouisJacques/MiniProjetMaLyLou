@@ -19,6 +19,7 @@
             android:id="@+id/buttonStop"
             android:layout_width="match_parent"
             android:layout_height="68dp"
+            android:onClick="launchGame"
             android:text="Stop Acquire Data" />
 
         <SurfaceView

@@ -2,6 +2,7 @@ package helloandroid.m2dl.miniprojetmalylou;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.Sensor;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import helloandroid.m2dl.miniprojetmalylou.diplay.MeasureDisplay;
 
@@ -41,7 +43,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private LocationListener androidLocationListener;
     private final static int REQUEST_CODE_UPDATE_LOCATION = 42;
     private final static int REQUEST_MIC_ACCESS = 10;
+    ArrayList<Integer> soundList = new ArrayList<Integer>();
+    ArrayList<Integer> gpsList = new ArrayList<Integer>();
+    ArrayList<Integer> lightList = new ArrayList<Integer>();
+    ArrayList<Integer> accList = new ArrayList<Integer>();
+    ArrayList<Integer> touchList = new ArrayList<Integer>();
 
+    int soundcpt = 0;
+    int gpscpt= 0;
+    int lightcpt= 0;
+    int acccpt= 0;
+    int touchcpt= 0;
     // constants
     private static final int VAL_MAX = 200;
 
@@ -107,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 public void onLocationChanged(Location loc) {
                     int progress = (int) Math.abs(loc.getLatitude()*loc.getLongitude()) % VAL_MAX;
                     display.updatePtGPS(progress);
+                    gpscpt= save(gpsList,gpscpt,(Math.abs(progress)));
+
                 }
 
                 public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -156,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         public void run() {
             Double amp = 190 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
             display.updatePtSonore((Math.abs(amp.intValue()*2)%385));
-
+            soundcpt = save(soundList,soundcpt,(Math.abs(amp.intValue()*2)%385));
 
             mHandler.postDelayed(eventSound, 1000);
         }
@@ -243,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 int progress = (int) ((magField_x + magField_y + magField_z));
 
                 display.updatePtAccelerometre(Math.abs(progress));
+                acccpt = save(accList,acccpt,(Math.abs(progress)));
             } else if (sensor == Sensor.TYPE_LIGHT) {
                 int progress = (int) (event.values[0]);
 
@@ -251,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 }
 
                 display.updatePtLum(progress);
+                lightcpt = save(lightList,lightcpt,(Math.abs(progress)));
             }
         }
     }
@@ -267,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         int progress = (int) (posx*posy) %VAL_MAX;
 
         display.updatePtEcran(progress);
+        touchcpt = save(touchList,touchcpt,(Math.abs(progress)));
         return false;
     }
 
@@ -306,5 +323,25 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     public void makeUseOfNewLocation(Location location){
         int progress = (int) (location.getLatitude()*location.getLongitude()) %VAL_MAX;
         display.updatePtGPS(progress);
+    }
+    public int save(ArrayList<Integer> list, int cpt, int val){
+        if(cpt<5){
+            list.add(val);
+            cpt++;
+        }else{
+            list.set(cpt-1,val);
+            cpt = (cpt+1)%4;
+        }
+        return cpt;
+    }
+    public void launchGame(View view){
+        Intent activityGame = new Intent(getApplicationContext(), GameActivity.class);
+        //activityGame.putExtra("key", "VALEUR TRANSFEREE");
+        activityGame.putExtra("valuesLight", lightList);
+        activityGame.putExtra("valuesGPS", gpsList);
+        activityGame.putExtra("valuesTouch", touchList);
+        activityGame.putExtra("valuesAcc", accList);
+        activityGame.putExtra("valuesSound", soundList);
+        startActivity(activityGame);
     }
 }

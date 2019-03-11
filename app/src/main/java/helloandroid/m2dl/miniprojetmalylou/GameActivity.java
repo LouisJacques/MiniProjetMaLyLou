@@ -35,7 +35,18 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         View view = findViewById(R.id.gameLayout);
 
         view.setOnTouchListener(this);
+        if(getIntent().getExtras() != null) {
+            TextView deb = (TextView) findViewById(R.id.debugViewGame);
+            Bundle bundle = getIntent().getExtras();
+            bundle.getString("valuesLight" );
+            String res = bundle.getString("valuesGPS" )
+                        + bundle.getString("valuesTouch" )
+                        +bundle.getString("valuesAcc" )
+                        +bundle.getString("valuesSound" );
 
+
+            deb.setText(res);
+        }
         initDisplayer();
         resizeLayout();
     }
