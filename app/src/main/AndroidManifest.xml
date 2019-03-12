@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StatisticsActivity"></activity>
+        <activity android:name=".StatisticsActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".LightActivity" />
         <activity android:name=".Geolocation" />
         <activity
