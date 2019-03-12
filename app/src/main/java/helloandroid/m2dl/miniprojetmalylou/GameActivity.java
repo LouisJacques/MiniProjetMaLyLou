@@ -2,6 +2,7 @@ package helloandroid.m2dl.miniprojetmalylou;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -32,50 +33,49 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
-        View view = findViewById(R.id.gameLayout);
 
-        view.setOnTouchListener(this);
-        if(getIntent().getExtras() != null) {
-            TextView deb = (TextView) findViewById(R.id.debugViewGame);
-            Bundle bundle = getIntent().getExtras();
-            String res ="";
-            if(bundle.getIntegerArrayList("valuesLight" ) != null){
-                    for(Integer i : bundle.getIntegerArrayList("valuesLight" )){
-                        res += i;
-                    }
-                //res +=  bundle.getString("valuesLight" ).toString();
-            }
-            if(bundle.getIntegerArrayList("valuesGPS" ) != null){
-                for(Integer i : bundle.getIntegerArrayList("valuesGPS" )){
-                    res += i;
-                }
-                //res += bundle.getString("valuesGPS" ).toString();
-            }
-            if(bundle.getIntegerArrayList("valuesTouch" ) != null){
-                for(Integer i : bundle.getIntegerArrayList("valuesTouch" )){
-                    res += i;
-                }
-                //res += bundle.getString("valuesTouch" ).toString();
-            }
-            if(bundle.getIntegerArrayList("valuesAcc" ) != null){
-                for(Integer i : bundle.getIntegerArrayList("valuesAcc" )){
-                    res += i;
-                }
-                //res += bundle.getString("valuesAcc" ).toString();
-            }
-            if(bundle.getIntegerArrayList("valuesSound" ) != null){
-                for(Integer i : bundle.getIntegerArrayList("valuesSound" )){
-                    res += i;
-                }
-                //res += bundle.getString("valuesSound" ).toString();
-            }
-
-
-
-            deb.setText(res);
-        }
-        initDisplayer();
         resizeLayout();
+        initDisplayer();
+
+        View view = findViewById(R.id.gameLayout);
+        view.setOnTouchListener(this);
+
+        if(getIntent().getExtras() != null) {
+            Bundle bundle = getIntent().getExtras();
+            String res = "";
+            if (bundle.getIntegerArrayList("valuesLight") != null) {
+                values.addAll(bundle.getIntegerArrayList("valuesLight"));
+            }
+            if (bundle.getIntegerArrayList("valuesGPS") != null) {
+                values.addAll(bundle.getIntegerArrayList("valuesGPS"));
+            }
+            if (bundle.getIntegerArrayList("valuesTouch") != null) {
+                values.addAll(bundle.getIntegerArrayList("valuesTouch"));
+            }
+            if (bundle.getIntegerArrayList("valuesAcc") != null) {
+                values.addAll(bundle.getIntegerArrayList("valuesAcc"));
+            }
+            if (bundle.getIntegerArrayList("valuesSound") != null) {
+                values.addAll(bundle.getIntegerArrayList("valuesSound"));
+            }
+        }
+
+        /*Thread thr = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                double next_tick = System.currentTimeMillis();
+                int loops = 0;
+                while (System.currentTimeMillis() > next_tick
+                        && loops < MAX_FRAMESKIP/2) {
+
+
+                    next_tick += SKIP_TICKS;
+                    loops++;
+                }
+                resizeLayout();
+            }
+        });*/
+
     }
 
     public void setGameValues(ArrayList<Integer> values) {
@@ -96,7 +96,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         LinearLayout l2 = findViewById(R.id.gameBarLayout);
         SurfaceView sv = findViewById(R.id.gameSurface);
         Button btn = findViewById(R.id.buttonStopGame);
-        TextView t = findViewById(R.id.scoreText);
+        Button t = findViewById(R.id.scoreText);
 
         ViewGroup.LayoutParams params = l.getLayoutParams();
         params.height = size.y;
@@ -106,10 +106,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         params2.height = size.y;
         params2.width = size.x;
 
-        /*ViewGroup.LayoutParams params3 = sv.getLayoutParams();
-        params3.height = l.getHeight() -60;
-        params3.width = l.getWidth() - 2;*/
-        sv.setMinimumHeight(l.getHeight()-60);
+        sv.setMinimumHeight(l.getHeight()-61);
         sv.setMinimumWidth(l.getWidth()-2);
 
         btn.setWidth(l.getWidth()/2);
@@ -117,6 +114,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         t.setWidth(l.getWidth()/2);
         t.setHeight(60);
+
     }
 
     @Override
@@ -126,9 +124,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
     /**
      * ralentit le process pour l'affichage
-     * @param next_tick
      */
-    private void waitAndDraw(double next_tick) {
+    private void waitAndDraw() {
+        double next_tick = System.currentTimeMillis();
         int loops = 0;
         while (System.currentTimeMillis() > next_tick
                 && loops < MAX_FRAMESKIP/2) {

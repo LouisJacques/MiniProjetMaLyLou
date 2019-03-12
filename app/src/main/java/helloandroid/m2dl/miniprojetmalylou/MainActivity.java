@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private LocationListener androidLocationListener;
     private final static int REQUEST_CODE_UPDATE_LOCATION = 42;
     private final static int REQUEST_MIC_ACCESS = 10;
+
     ArrayList<Integer> soundList = new ArrayList<Integer>();
     ArrayList<Integer> gpsList = new ArrayList<Integer>();
     ArrayList<Integer> lightList = new ArrayList<Integer>();
@@ -67,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         mHandler = new Handler();
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-
-
 
         View view = findViewById(R.id.mainLayout);
 
