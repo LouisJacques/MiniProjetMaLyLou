@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,6 +15,11 @@ public class StatisticsActivity extends AppCompatActivity {
     ArrayList<Integer> lightList = new ArrayList<Integer>();
     ArrayList<Integer> accList = new ArrayList<Integer>();
     ArrayList<Integer> touchList = new ArrayList<Integer>();
+    CheckBox accCheckBox;
+    CheckBox soundCheckBox;
+    CheckBox gpsCheckBox;
+    CheckBox lightCheckBox;
+    CheckBox touchCheckBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,13 +65,34 @@ public class StatisticsActivity extends AppCompatActivity {
     }
     public void launchGame(View view){
         Intent activityGame = new Intent(getApplicationContext(), GameActivity.class);
+        accCheckBox = (CheckBox) findViewById(R.id.accCheckBox);
+        soundCheckBox = (CheckBox) findViewById(R.id.soundCheckBox);
+        gpsCheckBox = (CheckBox) findViewById(R.id.gpsCheckBox);
+        touchCheckBox = (CheckBox) findViewById(R.id.touchcheckBox);
+        lightCheckBox = (CheckBox) findViewById(R.id.lightCheckBox);
 
         //activityGame.putExtra("key", "VALEUR TRANSFEREE");
-        activityGame.putExtra("valuesLight", lightList);
-        activityGame.putExtra("valuesGPS", gpsList);
-        activityGame.putExtra("valuesTouch", touchList);
-        activityGame.putExtra("valuesAcc", accList);
-        activityGame.putExtra("valuesSound", soundList);
+        if(accCheckBox.isChecked()){
+            activityGame.putExtra("valuesAcc", accList);
+
+        }
+        if(soundCheckBox.isChecked()){
+            activityGame.putExtra("valuesSound", soundList);
+
+        }
+        if(gpsCheckBox.isChecked()){
+            activityGame.putExtra("valuesGPS", gpsList);
+
+        }
+        if(touchCheckBox.isChecked()){
+            activityGame.putExtra("valuesTouch", touchList);
+
+        }
+        if(lightCheckBox.isChecked()){
+            activityGame.putExtra("valuesLight", lightList);
+
+        }
+
 
         startActivity(activityGame);
             }
