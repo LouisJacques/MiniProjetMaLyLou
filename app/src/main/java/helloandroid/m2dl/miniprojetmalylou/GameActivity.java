@@ -2,7 +2,6 @@ package helloandroid.m2dl.miniprojetmalylou;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -95,8 +94,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         LinearLayout l = findViewById(R.id.gameAllLayout);
         LinearLayout l2 = findViewById(R.id.gameBarLayout);
         SurfaceView sv = findViewById(R.id.gameSurface);
-        Button btn = findViewById(R.id.buttonStopGame);
-        Button t = findViewById(R.id.scoreText);
 
         ViewGroup.LayoutParams params = l.getLayoutParams();
         params.height = size.y;
@@ -108,12 +105,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         sv.setMinimumHeight(l.getHeight()-61);
         sv.setMinimumWidth(l.getWidth()-2);
-
-        btn.setWidth(l.getWidth()/2);
-        btn.setHeight(60);
-
-        t.setWidth(l.getWidth()/2);
-        t.setHeight(60);
 
     }
 

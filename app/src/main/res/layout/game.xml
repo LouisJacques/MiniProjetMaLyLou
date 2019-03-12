@@ -22,16 +22,21 @@
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <Button
                 android:id="@+id/buttonStopGame"
-                android:layout_width="150dp"
-                android:layout_height="60dp"
-                android:text="Start" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="START" />
+
             <Button
                 android:id="@+id/scoreText"
-                android:layout_width="150dp"
-                android:layout_height="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="SCORE : -" />
+
         </LinearLayout>
 
         <SurfaceView
