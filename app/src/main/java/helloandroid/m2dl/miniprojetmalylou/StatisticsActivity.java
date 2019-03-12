@@ -68,6 +68,5 @@ public class StatisticsActivity extends AppCompatActivity {
         activityGame.putExtra("valuesSound", soundList);
 
         startActivity(activityGame);
-        finish();
-    }
+            }
 }
