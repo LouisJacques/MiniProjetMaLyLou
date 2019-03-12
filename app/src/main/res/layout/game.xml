@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/gameAllLayout"
         android:layout_width="400dp"
-        android:layout_height="600dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,16 +18,16 @@
         <LinearLayout
             android:id="@+id/gameBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/buttonStopGame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="gameStartStop"
                 android:text="START" />
 
             <Button
@@ -35,6 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:clickable="false"
                 android:text="SCORE : -" />
 
         </LinearLayout>
@@ -42,10 +43,7 @@
         <SurfaceView
             android:id="@+id/gameSurface"
             android:layout_width="match_parent"
-            android:layout_height="600dp"
-            android:visibility="visible"
-            tools:layout_editor_absoluteX="3dp"
-            tools:layout_editor_absoluteY="6dp" />
+            android:layout_height="600dp" />
 
     </LinearLayout>
 

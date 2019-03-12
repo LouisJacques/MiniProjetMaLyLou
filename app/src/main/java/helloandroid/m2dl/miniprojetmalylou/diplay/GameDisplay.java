@@ -1,38 +1,44 @@
 package helloandroid.m2dl.miniprojetmalylou.diplay;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.view.SurfaceView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class GameDisplay {
-    private SurfaceView sv;
-    private Point size;
-    private HashMap<Point, Integer> numbersValues = new HashMap<>();
-    private static final int RADIUS = 20;
+    protected SurfaceView sv;
+    protected Point size;
+    protected HashMap<Point, Integer> numbersValues = new HashMap<>();
+    protected static final int RADIUS = 25;
 
     public GameDisplay(Point size, SurfaceView sv) {
         this.size = size;
         this.sv = sv;
     }
 
+    public void addPointOnDisplay(Point p, Integer v) {
+        numbersValues.put(p, v);
+    }
+
     /**
-     * Fait descendre d'un cran les valeurs
+     * Fait descendre d'un cran les valeurs (supprimme ceux dépassant la limite)
      */
     public int update() {
         int scoreToDecrease = 0;
-        ArrayList<Point> donePoints = new ArrayList<>();
-        for (Point p: numbersValues.keySet()) {
-            p.set(p.x, p.y + 1);
-            if (p.y >= sv.getHeight()) {
-                donePoints.add(p);
-            }
-        }
+        HashMap<Point, Integer> copy = new HashMap<>(numbersValues);
 
-        for (Point p: donePoints) {
-            scoreToDecrease += numbersValues.get(p);
+        for (Point p: copy.keySet()) {
+            int v = copy.get(p);
             numbersValues.remove(p);
+            if (p.y >= sv.getHeight()) {
+                scoreToDecrease += v;
+            } else {
+                numbersValues.put(new Point(p.x, p.y + 1), v);
+            }
         }
 
         return scoreToDecrease;
@@ -49,6 +55,7 @@ public class GameDisplay {
         for (Point p: numbersValues.keySet()) {
             if (distance(touch, p) <= RADIUS) {
                 found = p;
+                break;
             }
         }
 
@@ -82,6 +89,35 @@ public class GameDisplay {
     private double distance(Point p1, Point p2) {
         double x1 = p1.x; double y1 = p1.y;
         double x2 = p2.x; double y2 = p2.y;
-        return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2),2));
+        return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
+    }
+
+    /**
+     * dessine le défilement des boules du jeu
+     */
+    public void draw() {
+        Canvas c = sv.getHolder().lockCanvas();
+
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        c.drawRect(0,0,c.getWidth(),c.getHeight(), paint);
+
+        paint.setColor(Color.RED);
+        for (Map.Entry<Point, Integer> pt: numbersValues.entrySet()) {
+            Point p = pt.getKey();
+            c.drawCircle((float) p.x,(float)  p.y,(float)  RADIUS, paint);
+        }
+
+        sv.getHolder().unlockCanvasAndPost(c);
+    }
+
+    private int getLevelColor(Integer val) {
+        int c = 0xff0000;
+        return 1;
+    }
+
+    public boolean allValuesLaunched() {
+        return numbersValues.isEmpty();
     }
 }

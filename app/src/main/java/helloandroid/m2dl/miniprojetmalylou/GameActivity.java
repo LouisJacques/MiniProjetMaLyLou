@@ -26,15 +26,21 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private static final int MAX_FRAMESKIP = 5;
 
     private ArrayList<Integer> values = new ArrayList<>();
+    private ArrayList<Integer> valuesToLaunch = new ArrayList<>();
     private Integer gameScore = 0;
+
+    private boolean gameStarted = false;
+
+    // colonnes
+    private int[] colonnes = new int[3];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
 
-        resizeLayout();
         initDisplayer();
+        resizeLayout();
 
         View view = findViewById(R.id.gameLayout);
         view.setOnTouchListener(this);
@@ -58,6 +64,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 values.addAll(bundle.getIntegerArrayList("valuesSound"));
             }
         }
+
+        valuesToLaunch.addAll(values);
 
         /*Thread thr = new Thread(new Runnable() {
             @Override
@@ -84,7 +92,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private void initDisplayer() {
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
-        display = new GameDisplay(size, (SurfaceView) findViewById(R.id.surfaceView));
+        SurfaceView sv = findViewById(R.id.gameSurface);
+        display = new GameDisplay(size, sv);
+
+        colonnes[0] = size.x /4;
+        colonnes[1] = size.x /2;
+        colonnes[2] = 3*size.x /4;
     }
 
     private void resizeLayout() {
@@ -111,29 +124,81 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         Point point = new Point((int) motionEvent.getX(), (int) motionEvent.getY());
+        gameScore += display.getScoreFromTouchedPosition(point);
+        updateScoreDisplay();
         return false;
     }
+
     /**
      * ralentit le process pour l'affichage
      */
-    private void waitAndDraw() {
+    private void waitAndDraw(int waitUntilNext, int modulo) {
         double next_tick = System.currentTimeMillis();
         int loops = 0;
         while (System.currentTimeMillis() > next_tick
-                && loops < MAX_FRAMESKIP/2) {
-
+                && loops < MAX_FRAMESKIP) {
 
             next_tick += SKIP_TICKS;
             loops++;
         }
-        int scoreDown = display.update();
 
+        if (!valuesToLaunch.isEmpty() &&  waitUntilNext % modulo == 0) {
+            // ajout d'une boule au displayer
+            display.addPointOnDisplay(new Point(getRandomColumn(),20), valuesToLaunch.remove(0));
+        }
+
+        // fait descendre d'un cran les boules et vérifie qu'il y en ait ou non qui sont arrivées en bas
+        int scoreDown = display.update();
         gameScore -= scoreDown;
+
+        // màj affichage
+        display.draw();
         updateScoreDisplay();
+    }
+
+    private int getRandomColumn() {
+        int col = (int) (Math.random() * 100) % 3;
+
+        return colonnes[col];
     }
 
     private void updateScoreDisplay() {
         TextView t = findViewById(R.id.scoreText);
         t.setText(SCORE + gameScore);
+    }
+
+    private Thread thr = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            resizeLayout();
+            int waitUntilNext = 0;
+            int modulo = 52;
+
+            while (gameStarted) {
+                waitAndDraw(waitUntilNext, modulo);
+                waitUntilNext = (waitUntilNext + 1) % modulo;
+                if (display.allValuesLaunched()) {
+                    Button b = findViewById(R.id.buttonStopGame);
+                    b.setText("START");
+
+                    gameStarted = false;
+                }
+            }
+
+        }
+    });
+
+    public void gameStartStop(View view) {
+        Button b = findViewById(R.id.buttonStopGame);
+
+        if (!gameStarted) {
+            b.setText("STOP");
+            gameStarted = true;
+            thr.run();
+        } else {
+            b.setText("START");
+            gameStarted = false;
+            thr.stop();
+        }
     }
 }
