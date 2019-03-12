@@ -343,4 +343,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         activityGame.putExtra("valuesSound", soundList);
         startActivity(activityGame);
     }
+
+    public void goAnimationBall(View view) {
+        Intent intentAnimationBall = new Intent(getApplicationContext(), AnimationBallActivity.class);
+        startActivity(intentAnimationBall);
+    }
 }
