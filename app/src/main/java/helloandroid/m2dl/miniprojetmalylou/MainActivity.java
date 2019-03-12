@@ -335,12 +335,24 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
     public void launchGame(View view){
         Intent activityGame = new Intent(getApplicationContext(), GameActivity.class);
+        Intent activitySettings = new Intent(getApplicationContext(), StatisticsActivity.class);
+
         //activityGame.putExtra("key", "VALEUR TRANSFEREE");
         activityGame.putExtra("valuesLight", lightList);
         activityGame.putExtra("valuesGPS", gpsList);
         activityGame.putExtra("valuesTouch", touchList);
         activityGame.putExtra("valuesAcc", accList);
         activityGame.putExtra("valuesSound", soundList);
-        startActivity(activityGame);
+
+        activitySettings.putExtra("valuesLight", lightList);
+        activitySettings.putExtra("valuesGPS", gpsList);
+        activitySettings.putExtra("valuesTouch", touchList);
+        activitySettings.putExtra("valuesAcc", accList);
+        activitySettings.putExtra("valuesSound", soundList);
+        //startActivity(activityGame);
+        mRecorder.release();
+        sm.unregisterListener();
+        startActivity(activitySettings);
+        finish();
     }
 }
