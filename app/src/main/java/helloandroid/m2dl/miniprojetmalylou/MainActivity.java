@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     int acccpt= 0;
     int touchcpt= 0;
     // constants
-    private static final int VAL_MAX = 200;
+    private static final int VAL_MAX = 350;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +168,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private Runnable eventSound = new Runnable() {
         public void run() {
             Double amp = 190 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
+
             display.updatePtSonore((Math.abs(amp.intValue()*2)%385));
+
             soundcpt = save(soundList,soundcpt,(Math.abs(amp.intValue()*2)%385));
 
             mHandler.postDelayed(eventSound, 1000);
@@ -249,20 +251,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         synchronized (this) {
             if (sensor == Sensor.TYPE_MAGNETIC_FIELD) {
-                float magField_x = values[0];
-                float magField_y = values[1];
-                float magField_z = values[2];
-                float strength = magField_x + magField_y + magField_z;
-                int progress = (int) ((magField_x + magField_y + magField_z));
+                int value =  Math.abs((int)(Math.abs(values[0]) +  Math.abs(values[1]) +  Math.abs(values[2])));
 
-                display.updatePtAccelerometre(Math.abs(progress));
+                Sensor magneticSensor = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+                int maxvalue = (int)magneticSensor.getMaximumRange();
+                int progress  = (VAL_MAX * value )/maxvalue;
+
+                display.updatePtAccelerometre(Math.abs(value));
                 acccpt = save(accList,acccpt,(Math.abs(progress)));
             } else if (sensor == Sensor.TYPE_LIGHT) {
-                int progress = (int) (event.values[0]);
+                int value = (int) (event.values[0]);
 
-                if(progress > 200) {
-                    progress = progress % 200;
-                }
+                Sensor light = sm.getDefaultSensor(Sensor.TYPE_LIGHT);
+                int maxvalue = (int)light.getMaximumRange();
+                int progress = (value * VAL_MAX ) / maxvalue;
 
                 display.updatePtLum(progress);
                 lightcpt = save(lightList,lightcpt,(Math.abs(progress)));
