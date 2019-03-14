@@ -335,6 +335,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
         return cpt;
     }
+
     public void launchGame(View view){
         Intent activityGame = new Intent(getApplicationContext(), GameActivity.class);
         Intent activitySettings = new Intent(getApplicationContext(), StatisticsActivity.class);
@@ -365,5 +366,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         //startActivity(activityGame);
 
         startActivity(activitySettings);
+    }
+
+    public void goAnimationBall(View view) {
+        Intent intentAnimationBall = new Intent(getApplicationContext(), AnimationBallActivity.class);
+        startActivity(intentAnimationBall);
     }
 }
