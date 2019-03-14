@@ -117,8 +117,11 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (cptTouch < 5) {
-            display.setCptTouch(cptTouch++);
+        if (cptTouch < 10) {
+            cptTouch++;
+        }
+        if (cptTouch % 2 == 0) {
+            display.setCptTouch(cptTouch);
         }
         Point point = new Point((int) motionEvent.getX(), (int) motionEvent.getY() - (int) display.getSurfaceView().getY());
         gameScore += display.getScoreFromTouchedPosition(point);
@@ -183,7 +186,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 resized = true;
             }
             int waitUntilNext = 0;
-            int modulo = 100/cptTouch;
+            int modulo = 90/cptTouch;
 
             while (gameStarted) {
 
@@ -196,7 +199,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                             b.setText("START");
                             gameStarted = false;
                             clearAndReinitValuesToLaunch();
-                            //dialogue(gameScore > 1);
+                            dialogue(gameScore > 1);
                         }
                     });
 
@@ -245,7 +248,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             cptTouch = 1;
             clearAndReinitValuesToLaunch();
 
-            //dialogue(gameScore > 0);
+            dialogue(gameScore > 0);
 
             // score
             gameScore = 0;
@@ -254,11 +257,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void dialogue(boolean win) {
         Dialog d = new Dialog(this);
-        TextView txt = d.findViewById(R.id.textView2);
+        d.setContentView(R.layout.popup);
+        TextView txt = d.findViewById(R.id.dialogText);
         if (!win) {
-            txt.setText("Félicitations, vous avez perdu! points : " + gameScore);
+            txt.setText("Félicitations, vous avez perdu!");
         } else {
-            txt.setText("Gagné! points : " + gameScore);
+            txt.setText("Vous avez fait disparaître toutes les boules!");
         }
         d.show();
     }
