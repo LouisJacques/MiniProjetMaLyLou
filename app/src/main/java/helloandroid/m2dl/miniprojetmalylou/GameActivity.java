@@ -107,11 +107,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         params.width = size.x;
 
         ViewGroup.LayoutParams params2 = l2.getLayoutParams();
-        params2.height = size.y;
+        params2.height = 80;
         params2.width = size.x;
 
-        sv.setMinimumHeight(l.getHeight()-80);
-        sv.setMinimumWidth(l.getWidth()-2);
+        ViewGroup.LayoutParams params3 = sv.getLayoutParams();
+        params3.height = size.y - 80;
+        params3.width = size.x;
 
     }
 

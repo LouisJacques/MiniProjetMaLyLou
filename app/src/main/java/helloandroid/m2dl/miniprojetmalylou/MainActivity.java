@@ -117,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             androidLocationListener = new LocationListener() {
                 public void onLocationChanged(Location loc) {
                     int progress = (int) Math.abs(loc.getLatitude()*loc.getLongitude()) % VAL_MAX;
+                    if (progress == 0) {
+                        progress = 1;
+                    }
                     display.updatePtGPS(progress);
                     gpscpt= save(gpsList,gpscpt,(Math.abs(progress)));
 
@@ -154,10 +157,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         params.height = size.y;
         params.width = size.x;
 
-        sv.setMinimumHeight(l.getHeight()-60);
-        sv.setMinimumWidth(l.getWidth()-2);
-
-        btn.setWidth(l.getWidth()-2);
+        ViewGroup.LayoutParams paramsSv = sv.getLayoutParams();
+        paramsSv.height = size.y - 60;
+        paramsSv.width = size.x;
+        btn.setWidth(size.x);
         btn.setHeight(60);
     }
 
@@ -171,9 +174,13 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         public void run() {
             Double amp = 190 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
 
-            display.updatePtSonore((Math.abs(amp.intValue()*2)%385));
+            int calcul = (Math.abs(amp.intValue()*2)%VAL_MAX);
+            if (calcul == 0) {
+                calcul = 1;
+            }
+            display.updatePtSonore(calcul);
 
-            soundcpt = save(soundList,soundcpt,(Math.abs(amp.intValue()*2)%385));
+            soundcpt = save(soundList,soundcpt,calcul);
 
             mHandler.postDelayed(eventSound, 1000);
         }
@@ -259,6 +266,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 int maxvalue = (int)magneticSensor.getMaximumRange();
                 int progress  = (VAL_MAX * value )/maxvalue;
 
+                if (progress == 0) {
+                    progress = 1;
+                }
                 display.updatePtAccelerometre(Math.abs(value));
                 acccpt = save(accList,acccpt,(Math.abs(progress)));
             } else if (sensor == Sensor.TYPE_LIGHT) {
@@ -268,6 +278,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 int maxvalue = (int)light.getMaximumRange();
                 int progress = (value * VAL_MAX ) / maxvalue;
 
+                if (progress == 0) {
+                    progress = 1;
+                }
                 display.updatePtLum(progress);
                 lightcpt = save(lightList,lightcpt,(Math.abs(progress)));
             }
@@ -285,6 +298,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         float posy = event.getY();
         int progress = (int) (posx*posy) %VAL_MAX;
 
+        if (progress == 0) {
+            progress = 1;
+        }
         display.updatePtEcran(progress);
         touchcpt = save(touchList,touchcpt,(Math.abs(progress)));
         return false;
@@ -325,6 +341,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     public void makeUseOfNewLocation(Location location){
         int progress = (int) (location.getLatitude()*location.getLongitude()) %VAL_MAX;
+
+        if (progress == 0) {
+            progress = 1;
+        }
         display.updatePtGPS(progress);
     }
     public int save(ArrayList<Integer> list, int cpt, int val){

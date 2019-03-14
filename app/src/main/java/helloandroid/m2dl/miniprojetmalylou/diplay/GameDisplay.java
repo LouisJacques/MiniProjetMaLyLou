@@ -126,19 +126,22 @@ public class GameDisplay {
     public void draw() {
         Canvas c = sv.getHolder().lockCanvas();
 
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-        c.drawRect(0,0,c.getWidth(),c.getHeight(), paint);
+        if (c != null) {
 
-        Map<Point, Integer> nbTemp = copyMap(numbersValues);
-        for (Map.Entry<Point, Integer> pt: nbTemp.entrySet()) {
-            paint.setColor(getLevelColor(pt.getValue()));
-            Point p = pt.getKey();
-            c.drawCircle((float) p.x,(float)  p.y,(float)  RADIUS, paint);
+            Paint paint = new Paint();
+            paint.setColor(Color.BLACK);
+            paint.setStyle(Paint.Style.FILL);
+            c.drawRect(0, 0, c.getWidth(), c.getHeight(), paint);
+
+            Map<Point, Integer> nbTemp = copyMap(numbersValues);
+            for (Map.Entry<Point, Integer> pt : nbTemp.entrySet()) {
+                paint.setColor(getLevelColor(pt.getValue()));
+                Point p = pt.getKey();
+                c.drawCircle((float) p.x, (float) p.y, (float) RADIUS, paint);
+            }
+
+            sv.getHolder().unlockCanvasAndPost(c);
         }
-
-        sv.getHolder().unlockCanvasAndPost(c);
     }
 
     private int getLevelColor(Integer val) {
