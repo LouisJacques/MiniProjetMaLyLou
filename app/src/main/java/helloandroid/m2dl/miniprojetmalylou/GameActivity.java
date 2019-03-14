@@ -28,7 +28,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private ArrayList<Integer> values = new ArrayList<>();
     private ArrayList<Integer> valuesToLaunch = new ArrayList<>();
     private Integer gameScore = 0;
-
+    private int cptTouch = 1;
     private boolean gameStarted = false;
 
     // colonnes
@@ -119,10 +119,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         sv.setMinimumHeight(l.getHeight()-61);
         sv.setMinimumWidth(l.getWidth()-2);
 
+
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
+        display.setCptTouch(cptTouch++);
         Point point = new Point((int) motionEvent.getX(), (int) motionEvent.getY());
         gameScore += display.getScoreFromTouchedPosition(point);
         updateScoreDisplay();
@@ -164,7 +166,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void updateScoreDisplay() {
         TextView t = findViewById(R.id.scoreText);
-        t.setText(SCORE + gameScore);
+        //t.setText(SCORE + gameScore);
     }
 
     private Thread thr = new Thread(new Runnable() {
@@ -175,11 +177,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             int modulo = 52;
 
             while (gameStarted) {
+
                 waitAndDraw(waitUntilNext, modulo);
                 waitUntilNext = (waitUntilNext + 1) % modulo;
                 if (display.allValuesLaunched()) {
                     Button b = findViewById(R.id.buttonStopGame);
-                    b.setText("START");
+       //             b.setText("START");
 
                     gameStarted = false;
                 }
@@ -194,7 +197,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         if (!gameStarted) {
             b.setText("STOP");
             gameStarted = true;
-            thr.run();
+            thr.start();//.run();
         } else {
             b.setText("START");
             gameStarted = false;

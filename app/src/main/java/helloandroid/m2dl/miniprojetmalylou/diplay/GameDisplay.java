@@ -15,6 +15,15 @@ public class GameDisplay {
     protected HashMap<Point, Integer> numbersValues = new HashMap<>();
     protected static final int RADIUS = 25;
 
+    public int getCptTouch() {
+        return cptTouch;
+    }
+
+    public void setCptTouch(int cptTouch) {
+        this.cptTouch = cptTouch;
+    }
+
+    private  int cptTouch = 1;
     public GameDisplay(Point size, SurfaceView sv) {
         this.size = size;
         this.sv = sv;
@@ -37,7 +46,10 @@ public class GameDisplay {
             if (p.y >= sv.getHeight()) {
                 scoreToDecrease += v;
             } else {
-                numbersValues.put(new Point(p.x, p.y + 1), v);
+                //for(int i =0; i< cptTouch ; i++) {
+                    numbersValues.put(new Point(p.x, p.y + cptTouch ), v);
+                    //draw();
+                //}
             }
         }
 
