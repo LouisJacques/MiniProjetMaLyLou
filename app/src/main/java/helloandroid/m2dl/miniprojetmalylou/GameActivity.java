@@ -1,7 +1,9 @@
 package helloandroid.m2dl.miniprojetmalylou;
 
+import android.app.Dialog;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -19,7 +21,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     private GameDisplay display;
 
-    // consants
+    // constants
     private static final String SCORE = "SCORE : ";
     private static final int TICKS_PER_SECOND = 25;
     private static final int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
@@ -33,6 +35,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private boolean resized = false;
 
     private Button btnScore;
+    private Button b;
 
     // colonnes
     private int[] colonnes = new int[3];
@@ -42,6 +45,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
         btnScore = findViewById(R.id.scoreText);
+        b = findViewById(R.id.buttonStopGame);
 
         initDisplayer();
         resizeLayout();
@@ -51,7 +55,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         if(getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
-            String res = "";
             if (bundle.getIntegerArrayList("valuesLight") != null) {
                 values.addAll(bundle.getIntegerArrayList("valuesLight"));
             }
@@ -72,11 +75,11 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         for (Integer v: values) {
             valuesToLaunch.add(v);
         }
-
-
-
     }
 
+    /**
+     * initialise GameDisplay
+     */
     private void initDisplayer() {
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
@@ -88,6 +91,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         colonnes[2] = 3*size.x /4;
     }
 
+    /**
+     * redimentionne
+     */
     private void resizeLayout() {
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
@@ -106,7 +112,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         sv.setMinimumHeight(l.getHeight()-80);
         sv.setMinimumWidth(l.getWidth()-2);
-
 
     }
 
@@ -146,12 +151,17 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         // màj affichage
         display.draw();
-        updateScoreDisplay();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateScoreDisplay();
+            }
+        });
+
     }
 
     private int getRandomColumn() {
         int col = (int) (Math.random() * 100) % 3;
-
         return colonnes[col];
     }
 
@@ -168,53 +178,88 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         Thread th = new Thread(new Runnable() {
             @Override
             public void run() {
-                if (!resized) {
-                    resizeLayout();
-                    resized = true;
-                }
-                int waitUntilNext = 0;
-                int modulo = 100/cptTouch;
+            if (!resized) {
+                resizeLayout();
+                resized = true;
+            }
+            int waitUntilNext = 0;
+            int modulo = 100/cptTouch;
 
-                while (gameStarted) {
+            while (gameStarted) {
 
-                    waitAndDraw(waitUntilNext, modulo);
-                    waitUntilNext = (waitUntilNext + 1) % modulo;
-                    if (display.allValuesLaunched() && valuesToLaunch.isEmpty()) {
-                        Button b = findViewById(R.id.buttonStopGame);
-                        // b.setText("START");
-                        gameStarted = false;
-                    }
+                waitAndDraw(waitUntilNext, modulo);
+                waitUntilNext = (waitUntilNext + 1) % modulo;
+                if (display.allValuesLaunched() && valuesToLaunch.isEmpty()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            b.setText("START");
+                            gameStarted = false;
+                            clearAndReinitValuesToLaunch();
+                            //dialogue(gameScore > 1);
+                        }
+                    });
+
                 }
+            }
             }
         });
 
         return th;
     }
 
-    public void gameStartStop(View view) {
-        Button b = findViewById(R.id.buttonStopGame);
+    private void clearAndReinitValuesToLaunch() {
+        valuesToLaunch.clear();
+        for (Integer v: values) {
+            valuesToLaunch.add(v);
+        }
+    }
 
+    /**
+     * Démarre/stoppe le jeu quand on clique sur le bouton START/STOP
+     * @param view
+     */
+    public void gameStartStop(View view) {
         if (!gameStarted) {
+            // màj bouton
             b.setText("STOP");
             gameStarted = true;
-            System.out.println(thr.getState());
+
+            // thread
             if (thr.getState() == Thread.State.TERMINATED) {
                 thr = setUpThread();
             }
             if (thr.getState() == Thread.State.NEW) {
-                System.out.println("Je démarre");
-                thr.start();//.run();
+                thr.start();
             }
         } else {
+            // màj bouton
             b.setText("START");
             gameStarted = false;
+
+            // tread
             thr.interrupt();
+
+             // reset affichage et valeurs
             display.reset();
             cptTouch = 1;
-            valuesToLaunch.clear();
-            for (Integer v: values) {
-                valuesToLaunch.add(v);
-            }
+            clearAndReinitValuesToLaunch();
+
+            //dialogue(gameScore > 0);
+
+            // score
+            gameScore = 0;
         }
+    }
+
+    private void dialogue(boolean win) {
+        Dialog d = new Dialog(this);
+        TextView txt = d.findViewById(R.id.textView2);
+        if (!win) {
+            txt.setText("Félicitations, vous avez perdu! points : " + gameScore);
+        } else {
+            txt.setText("Gagné! points : " + gameScore);
+        }
+        d.show();
     }
 }
