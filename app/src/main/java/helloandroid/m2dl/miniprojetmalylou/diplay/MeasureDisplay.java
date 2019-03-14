@@ -25,7 +25,7 @@ public class MeasureDisplay {
     private ArrayList<Path> hexagonePaths = new ArrayList<>();
 
     // constants
-    private static final int VAL_MAX = 200;
+    private static final int VAL_MAX = 350;
     private static final int TICKS_PER_SECOND = 25;
     private static final int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
     private static final int MAX_FRAMESKIP = 5;
