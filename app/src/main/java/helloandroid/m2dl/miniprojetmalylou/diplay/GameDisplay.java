@@ -33,12 +33,16 @@ public class GameDisplay {
         numbersValues.put(p, v);
     }
 
+    public SurfaceView getSurfaceView() {
+        return sv;
+    }
+
     /**
      * Fait descendre d'un cran les valeurs (supprimme ceux dépassant la limite)
      */
     public int update() {
         int scoreToDecrease = 0;
-        HashMap<Point, Integer> copy = new HashMap<>(numbersValues);
+        HashMap<Point, Integer> copy = copyMap(numbersValues);
 
         for (Point p: copy.keySet()) {
             int v = copy.get(p);
@@ -53,6 +57,15 @@ public class GameDisplay {
         return scoreToDecrease;
     }
 
+    private HashMap<Point, Integer> copyMap(HashMap<Point, Integer> map) {
+        HashMap<Point, Integer> temp = new HashMap<>();
+        for (Map.Entry<Point, Integer> entry: map.entrySet()) {
+            temp.put(entry.getKey(), entry.getValue());
+        }
+
+        return temp;
+    }
+
     /**
      * à partir du point de l'écran touché, màj la valeur éventuellement touchée et donne un point
      * (0 si rien de touché)
@@ -61,9 +74,9 @@ public class GameDisplay {
      */
     public int getScoreFromTouchedPosition(Point touch) {
         Point found = null;
-        Map<Point, Integer> temp = new HashMap<>(numbersValues);
+        Map<Point, Integer> temp = copyMap(numbersValues);
         for (Point p: temp.keySet()) {
-            if (distance(touch, p) <= RADIUS) {
+            if ((int) distance(touch, p) <= RADIUS) {
                 found = p;
                 break;
             }
@@ -73,7 +86,7 @@ public class GameDisplay {
 
         if (found != null) {
             Integer curr = numbersValues.get(found);
-            if (curr <= 1) {
+            if (curr != null && curr <= 1) {
                 // s'il restait 1 clic à faire alors on a +1 point
                 numbersValues.remove(found);
                 ret = 1;
@@ -102,6 +115,11 @@ public class GameDisplay {
         return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow((y1-y2), 2));
     }
 
+    public void reset() {
+        numbersValues.clear();
+        draw();
+    }
+
     /**
      * dessine le défilement des boules du jeu
      */
@@ -113,7 +131,7 @@ public class GameDisplay {
         paint.setStyle(Paint.Style.FILL);
         c.drawRect(0,0,c.getWidth(),c.getHeight(), paint);
 
-        Map<Point, Integer> nbTemp = new HashMap<>(numbersValues);
+        Map<Point, Integer> nbTemp = copyMap(numbersValues);
         for (Map.Entry<Point, Integer> pt: nbTemp.entrySet()) {
             paint.setColor(getLevelColor(pt.getValue()));
             Point p = pt.getKey();

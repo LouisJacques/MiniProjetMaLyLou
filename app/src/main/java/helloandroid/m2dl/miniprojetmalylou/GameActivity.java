@@ -30,6 +30,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private Integer gameScore = 0;
     private int cptTouch = 1;
     private boolean gameStarted = false;
+    private boolean resized = false;
+
+    private Button btnScore;
 
     // colonnes
     private int[] colonnes = new int[3];
@@ -38,6 +41,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
+        btnScore = findViewById(R.id.scoreText);
 
         initDisplayer();
         resizeLayout();
@@ -65,28 +69,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
 
-        valuesToLaunch.addAll(values);
-
-        /*Thread thr = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                double next_tick = System.currentTimeMillis();
-                int loops = 0;
-                while (System.currentTimeMillis() > next_tick
-                        && loops < MAX_FRAMESKIP/2) {
+        for (Integer v: values) {
+            valuesToLaunch.add(v);
+        }
 
 
-                    next_tick += SKIP_TICKS;
-                    loops++;
-                }
-                resizeLayout();
-            }
-        });*/
 
-    }
-
-    public void setGameValues(ArrayList<Integer> values) {
-        this.values = values;
     }
 
     private void initDisplayer() {
@@ -127,7 +115,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         if (cptTouch < 5) {
             display.setCptTouch(cptTouch++);
         }
-        Point point = new Point((int) motionEvent.getX(), (int) motionEvent.getY());
+        Point point = new Point((int) motionEvent.getX(), (int) motionEvent.getY() - (int) display.getSurfaceView().getY());
         gameScore += display.getScoreFromTouchedPosition(point);
         updateScoreDisplay();
         return false;
@@ -167,32 +155,41 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         return colonnes[col];
     }
 
+    /**
+     * màj le score sur l'affichage
+     */
     private void updateScoreDisplay() {
-        TextView t = findViewById(R.id.scoreText);
-        //t.setText(SCORE + gameScore);
+        btnScore.setText(SCORE + gameScore);
     }
 
-    private Thread thr = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            resizeLayout();
-            int waitUntilNext = 0;
-            int modulo = 100;
+    private Thread thr = setUpThread();
 
-            while (gameStarted) {
+    private Thread setUpThread() {
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!resized) {
+                    resizeLayout();
+                    resized = true;
+                }
+                int waitUntilNext = 0;
+                int modulo = 100/cptTouch;
 
-                waitAndDraw(waitUntilNext, modulo);
-                waitUntilNext = (waitUntilNext + 1) % modulo;
-                if (display.allValuesLaunched()) {
-                    Button b = findViewById(R.id.buttonStopGame);
-       //             b.setText("START");
+                while (gameStarted) {
 
-                    gameStarted = false;
+                    waitAndDraw(waitUntilNext, modulo);
+                    waitUntilNext = (waitUntilNext + 1) % modulo;
+                    if (display.allValuesLaunched() && valuesToLaunch.isEmpty()) {
+                        Button b = findViewById(R.id.buttonStopGame);
+                        // b.setText("START");
+                        gameStarted = false;
+                    }
                 }
             }
+        });
 
-        }
-    });
+        return th;
+    }
 
     public void gameStartStop(View view) {
         Button b = findViewById(R.id.buttonStopGame);
@@ -200,11 +197,24 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         if (!gameStarted) {
             b.setText("STOP");
             gameStarted = true;
-            thr.start();//.run();
+            System.out.println(thr.getState());
+            if (thr.getState() == Thread.State.TERMINATED) {
+                thr = setUpThread();
+            }
+            if (thr.getState() == Thread.State.NEW) {
+                System.out.println("Je démarre");
+                thr.start();//.run();
+            }
         } else {
             b.setText("START");
             gameStarted = false;
-            thr.stop();
+            thr.interrupt();
+            display.reset();
+            cptTouch = 1;
+            valuesToLaunch.clear();
+            for (Integer v: values) {
+                valuesToLaunch.add(v);
+            }
         }
     }
 }
