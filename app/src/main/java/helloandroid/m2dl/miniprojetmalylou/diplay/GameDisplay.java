@@ -13,7 +13,7 @@ public class GameDisplay {
     protected SurfaceView sv;
     protected Point size;
     protected HashMap<Point, Integer> numbersValues = new HashMap<>();
-    protected static final int RADIUS = 25;
+    protected static final int RADIUS = 50;
 
     public int getCptTouch() {
         return cptTouch;
@@ -46,10 +46,7 @@ public class GameDisplay {
             if (p.y >= sv.getHeight()) {
                 scoreToDecrease += v;
             } else {
-                //for(int i =0; i< cptTouch ; i++) {
-                    numbersValues.put(new Point(p.x, p.y + cptTouch ), v);
-                    //draw();
-                //}
+                numbersValues.put(new Point(p.x, p.y + cptTouch ), v);
             }
         }
 
@@ -64,7 +61,8 @@ public class GameDisplay {
      */
     public int getScoreFromTouchedPosition(Point touch) {
         Point found = null;
-        for (Point p: numbersValues.keySet()) {
+        Map<Point, Integer> temp = new HashMap<>(numbersValues);
+        for (Point p: temp.keySet()) {
             if (distance(touch, p) <= RADIUS) {
                 found = p;
                 break;
@@ -115,8 +113,9 @@ public class GameDisplay {
         paint.setStyle(Paint.Style.FILL);
         c.drawRect(0,0,c.getWidth(),c.getHeight(), paint);
 
-        paint.setColor(Color.RED);
-        for (Map.Entry<Point, Integer> pt: numbersValues.entrySet()) {
+        Map<Point, Integer> nbTemp = new HashMap<>(numbersValues);
+        for (Map.Entry<Point, Integer> pt: nbTemp.entrySet()) {
+            paint.setColor(getLevelColor(pt.getValue()));
             Point p = pt.getKey();
             c.drawCircle((float) p.x,(float)  p.y,(float)  RADIUS, paint);
         }
@@ -125,11 +124,13 @@ public class GameDisplay {
     }
 
     private int getLevelColor(Integer val) {
-        int c = 0xff0000;
-        return 1;
+        int c = Color.RED;
+        return c - (otherColor / val);
     }
 
     public boolean allValuesLaunched() {
         return numbersValues.isEmpty();
     }
+
+    private int otherColor = 0x00ffff;
 }

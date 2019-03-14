@@ -116,7 +116,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         params2.height = size.y;
         params2.width = size.x;
 
-        sv.setMinimumHeight(l.getHeight()-61);
+        sv.setMinimumHeight(l.getHeight()-80);
         sv.setMinimumWidth(l.getWidth()-2);
 
 
@@ -124,7 +124,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        display.setCptTouch(cptTouch++);
+        if (cptTouch < 5) {
+            display.setCptTouch(cptTouch++);
+        }
         Point point = new Point((int) motionEvent.getX(), (int) motionEvent.getY());
         gameScore += display.getScoreFromTouchedPosition(point);
         updateScoreDisplay();
@@ -146,7 +148,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         if (!valuesToLaunch.isEmpty() &&  waitUntilNext % modulo == 0) {
             // ajout d'une boule au displayer
-            display.addPointOnDisplay(new Point(getRandomColumn(),20), valuesToLaunch.remove(0));
+            int v = valuesToLaunch.remove(0) % 5;
+            display.addPointOnDisplay(new Point(getRandomColumn(),25), v+1);
         }
 
         // fait descendre d'un cran les boules et vérifie qu'il y en ait ou non qui sont arrivées en bas
@@ -174,7 +177,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         public void run() {
             resizeLayout();
             int waitUntilNext = 0;
-            int modulo = 52;
+            int modulo = 100;
 
             while (gameStarted) {
 
