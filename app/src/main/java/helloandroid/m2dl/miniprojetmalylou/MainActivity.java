@@ -169,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         public void run() {
             Double amp = 190 * Math.log10(mRecorder.getMaxAmplitude() / 2700.0);
             display.updatePtSonore((Math.abs(amp.intValue()*2)%385));
+
             soundcpt = save(soundList,soundcpt,(Math.abs(amp.intValue()*2)%385));
 
             mHandler.postDelayed(eventSound, 1000);
@@ -333,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
         return cpt;
     }
+
     public void launchGame(View view){
         Intent activityGame = new Intent(getApplicationContext(), GameActivity.class);
         //activityGame.putExtra("key", "VALEUR TRANSFEREE");

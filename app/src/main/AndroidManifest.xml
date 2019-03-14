@@ -22,8 +22,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".AnimationBallActivity"></activity>
-        <activity android:name=".LightActivity" />
-        <activity android:name=".Geolocation" />
         <activity
             android:name=".GameActivity"
             android:screenOrientation="portrait" />
