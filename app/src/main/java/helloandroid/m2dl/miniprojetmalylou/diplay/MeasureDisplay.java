@@ -125,6 +125,7 @@ public class MeasureDisplay {
         }
         // points
         polyPaint.setColor(Color.RED);
+        polyPaint.setAlpha(128);
         canvas.drawCircle((float) ptCentre.x, (float) ptCentre.y, 2, polyPaint);
         polyPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         canvas.drawPath(polyPath, polyPaint);
@@ -137,6 +138,7 @@ public class MeasureDisplay {
     private void drawText(Canvas canvas, Paint polyPaint) {
         polyPaint.setStyle(Paint.Style.STROKE);
         polyPaint.setColor(Color.WHITE);
+        polyPaint.setAlpha(255);
         polyPaint.setTextSize(VAL_MAX/7);
         ArrayList<Point> hexa = getHexagone(5);
 

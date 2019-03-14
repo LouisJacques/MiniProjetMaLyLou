@@ -86,14 +86,16 @@ public class GameDisplay {
 
         if (found != null) {
             Integer curr = numbersValues.get(found);
-            if (curr != null && curr <= 1) {
-                // s'il restait 1 clic à faire alors on a +1 point
-                numbersValues.remove(found);
-                ret = 1;
-            } else {
-                // s'il restait 2+ clics alors on décrémente
-                curr--;
-                numbersValues.put(found, curr);
+            if (curr != null) {
+                if (curr <= 1) {
+                    // s'il restait 1 clic à faire alors on a +1 point
+                    numbersValues.remove(found);
+                    ret = 1;
+                } else {
+                    // s'il restait 2+ clics alors on décrémente
+                    curr--;
+                    numbersValues.put(found, curr);
+                }
             }
         }
 

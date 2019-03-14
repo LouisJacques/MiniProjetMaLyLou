@@ -213,6 +213,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     private void clearAndReinitValuesToLaunch() {
+        cptTouch = 1;
         valuesToLaunch.clear();
         for (Integer v: values) {
             valuesToLaunch.add(v);
@@ -246,9 +247,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
              // reset affichage et valeurs
             display.reset();
-            cptTouch = 1;
             clearAndReinitValuesToLaunch();
-
             dialogue(gameScore > 0);
 
             // score
@@ -257,14 +256,16 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     private void dialogue(boolean win) {
-        Dialog d = new Dialog(this);
-        d.setContentView(R.layout.popup);
-        TextView txt = d.findViewById(R.id.dialogText);
-        if (!win) {
-            txt.setText("Félicitations, vous avez perdu!");
-        } else {
-            txt.setText("Vous avez fait disparaître toutes les boules!");
+        if (this != null && !this.isFinishing()) {
+            Dialog d = new Dialog(this);
+            d.setContentView(R.layout.popup);
+            TextView txt = d.findViewById(R.id.dialogText);
+            if (!win) {
+                txt.setText("Félicitations, vous avez perdu!");
+            } else {
+                txt.setText("Vous avez fait disparaître toutes les boules!");
+            }
+            d.show();
         }
-        d.show();
     }
 }
