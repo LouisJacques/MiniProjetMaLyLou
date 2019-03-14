@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     int acccpt= 0;
     int touchcpt= 0;
     // constants
-    private static final int VAL_MAX = 350;
+    private int VAL_MAX = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +143,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private void resizeLayout() {
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
+
+        VAL_MAX = 5 * size.x / 18;
 
         LinearLayout l = findViewById(R.id.layout);
         SurfaceView sv = findViewById(R.id.surfaceView);

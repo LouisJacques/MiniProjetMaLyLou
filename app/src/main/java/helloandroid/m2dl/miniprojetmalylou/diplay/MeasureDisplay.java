@@ -25,7 +25,7 @@ public class MeasureDisplay {
     private ArrayList<Path> hexagonePaths = new ArrayList<>();
 
     // constants
-    private static final int VAL_MAX = 350;
+    private int VAL_MAX;
     private static final int TICKS_PER_SECOND = 25;
     private static final int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
     private static final int MAX_FRAMESKIP = 5;
@@ -36,6 +36,7 @@ public class MeasureDisplay {
 
     public MeasureDisplay(Point size, SurfaceView sv) {
         this.size = size;
+        VAL_MAX = 5 * size.x / 18;
         this.sv = sv;
         setPointsAndLists();
     }
@@ -223,7 +224,7 @@ public class MeasureDisplay {
             last = ptLuminosite;
         }
 
-        if (list.size() == 1) {
+        if (list.size() == 1 || list.size() == 2) {
             list.add(ptCentre);
         } else if (list.size() > 1) {
             list.add(getBarycentre(last, list.get(0)));
@@ -239,12 +240,13 @@ public class MeasureDisplay {
      */
     private Path getPath(ArrayList<Point> list) {
         Path polyPath = new Path();
-        polyPath.moveTo(list.get(0).x, list.get(0).y);
-        for (Point p: list) {
-            polyPath.lineTo(p.x, p.y);
+        if (!list.isEmpty()) {
+            polyPath.moveTo(list.get(0).x, list.get(0).y);
+            for (Point p : list) {
+                polyPath.lineTo(p.x, p.y);
+            }
+            polyPath.lineTo(list.get(0).x, list.get(0).y);
         }
-        polyPath.lineTo(list.get(0).x, list.get(0).y);
-
         return polyPath;
     }
 
