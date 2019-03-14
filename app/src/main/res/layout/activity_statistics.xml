@@ -41,6 +41,13 @@
                     android:checked="false"
                     android:text="Sound" />
 
+                <Button
+                    android:id="@+id/valuesSoundButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="displaySoundValues"
+                    android:text="values" />
+
                 <TextView
                     android:id="@+id/soundTextView"
                     android:layout_width="match_parent"
@@ -57,6 +64,13 @@
                     android:layout_height="wrap_content"
                     android:checked="false"
                     android:text="GPS" />
+
+                <Button
+                    android:id="@+id/valuesGpsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="displayGpsValues"
+                    android:text="Values" />
 
                 <TextView
                     android:id="@+id/gpsTextView"
@@ -75,6 +89,13 @@
                     android:checked="false"
                     android:text="Touch" />
 
+                <Button
+                    android:id="@+id/valuesTouchButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="displayTouchValues"
+                    android:text="Values" />
+
                 <TextView
                     android:id="@+id/touchTextView"
                     android:layout_width="match_parent"
@@ -92,6 +113,13 @@
                     android:checked="false"
                     android:text="Accelerator (z)" />
 
+                <Button
+                    android:id="@+id/valuesAccButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="displayAccValues"
+                    android:text="Values" />
+
                 <TextView
                     android:id="@+id/accTextView"
                     android:layout_width="wrap_content"
@@ -108,6 +136,13 @@
                     android:layout_height="wrap_content"
                     android:checked="false"
                     android:text="Light" />
+
+                <Button
+                    android:id="@+id/valuesLIghtButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="displayLightValues"
+                    android:text="Values" />
 
                 <TextView
                     android:id="@+id/lightTextView"

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -30,32 +31,52 @@ public class StatisticsActivity extends AppCompatActivity {
             String res = "";
             if (bundle.getIntegerArrayList("valuesLight") != null) {
                 lightList.addAll(bundle.getIntegerArrayList("valuesLight"));
-                TextView text = (TextView)findViewById(R.id.lightTextView);
-                text.setText(formatList(lightList));
+                Button button = (Button)findViewById(R.id.valuesLIghtButton);
+                button.setText(lightList.size() + " values");
             }
             if (bundle.getIntegerArrayList("valuesGPS") != null) {
                 gpsList.addAll(bundle.getIntegerArrayList("valuesGPS"));
-                TextView text = (TextView)findViewById(R.id.gpsTextView);
-                text.setText(formatList(gpsList));
+                Button button = (Button)findViewById(R.id.valuesGpsButton);
+                button.setText(gpsList.size() + " values");
             }
             if (bundle.getIntegerArrayList("valuesTouch") != null) {
                 touchList.addAll(bundle.getIntegerArrayList("valuesTouch"));
-                TextView text = (TextView)findViewById(R.id.touchTextView);
-                text.setText(formatList(touchList));
+                Button button = (Button)findViewById(R.id.valuesTouchButton);
+                button.setText(touchList.size() + " values");
             }
             if (bundle.getIntegerArrayList("valuesAcc") != null) {
                 accList.addAll(bundle.getIntegerArrayList("valuesAcc"));
-                TextView text = (TextView)findViewById(R.id.accTextView);
-                text.setText(formatList(accList));
+                Button button = (Button)findViewById(R.id.valuesAccButton);
+                button.setText(accList.size() + " values");
             }
             if (bundle.getIntegerArrayList("valuesSound") != null) {
                 soundList.addAll(bundle.getIntegerArrayList("valuesSound"));
-                TextView text = (TextView)findViewById(R.id.soundTextView);
-                text.setText(formatList(soundList));
+                Button button = (Button)findViewById(R.id.valuesSoundButton);
+                button.setText(soundList.size() + " values");
             }
         }
     }
 
+    public void displayLightValues(View view){
+        TextView text = (TextView)findViewById(R.id.lightTextView);
+        text.setText(formatList(lightList));
+    }
+    public void displaySoundValues(View view){
+        TextView text = (TextView)findViewById(R.id.soundTextView);
+        text.setText(formatList(soundList));
+    }
+    public void displayGpsValues(View view){
+        TextView text = (TextView)findViewById(R.id.gpsTextView);
+        text.setText(formatList(gpsList));
+    }
+    public void displayAccValues(View view){
+        TextView text = (TextView)findViewById(R.id.accTextView);
+        text.setText(formatList(accList));
+    }
+    public void displayTouchValues(View view){
+        TextView text = (TextView)findViewById(R.id.touchTextView);
+        text.setText(formatList(touchList));
+    }
     public String formatList(ArrayList<Integer> list){
         String res = "";
         for (Integer i : list){

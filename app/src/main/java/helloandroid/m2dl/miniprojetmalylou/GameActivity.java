@@ -146,7 +146,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
         // màj affichage
         display.draw();
-        updateScoreDisplay();
+//        updateScoreDisplay();
     }
 
     private int getRandomColumn() {
